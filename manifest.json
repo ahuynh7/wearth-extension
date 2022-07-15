@@ -3,6 +3,7 @@
     "description": "mvp build for sustainable clothing extension",
     "version": "1.0",
     "manifest_version": 3,
+    "permissions": ["storage"],
     "background": {
         "service_worker": "background.js"
     },
@@ -11,5 +12,8 @@
         "32": "/icons/icon-32.png",
         "48": "/icons/icon-64.png",
         "128": "/icons/icon-128.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
     }
 }
