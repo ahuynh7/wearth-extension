@@ -14,9 +14,26 @@ const parseUrl = url => {
 };
 
 //listens for messages sent from contentScripts; debugging purposes
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    console.log(sender);
     sendResponse(true);
+
+    //distributing scrapped data each hard-picked sustainable website, then filters for top 5 results
+    const toEverlane = async () => {
+
+    };
+
+    const toPact = async () => {
+
+    };
+
+    const toPatagonia = async () => {
+
+    };
+
+    await toEverlane();
+    await toPact();
+    await toPatagonia();
 });
 
 //listens for url changes
@@ -35,5 +52,5 @@ chrome.tabs.onUpdated.addListener((tabId, {status}, tab) => {
 });
 
 chrome.tabs.onActivated.addListener(activeInfo => {
-    console.log(activeInfo)
+    //console.log(activeInfo)
 });
