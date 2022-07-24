@@ -22,14 +22,5 @@
         "32": "/icons/icon-32.png",
         "48": "/icons/icon-64.png",
         "128": "/icons/icon-128.png"
-    },
-    
-    "background": {
-        "service_worker": "background.js"
-    },
-    "permissions": ["storage"],
-    "action": {
-        "default_title": "Swear",
-        "default_popup": "src/popup.html"
     }
 }
