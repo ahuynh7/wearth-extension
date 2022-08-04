@@ -51,23 +51,46 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .catch(error => console.log('error', error));
 
         //begin filtering alg.
-        var category;
+        var category, parent;
         message.color = message.color.split(" ").pop();
 
-        if (!message.type) category = "tops & shirts";
-        else if (message.type === "pullovers") category = "hoodies & sweatshirts";
-        else if (message.waist_line) category = "pants & shorts";
-        else category = "boxers & briefs";
+        if (!message.type) {
+            category = "tops & shirts";
+            parent = "apparel";
+
+        } else if (message.type === "pullovers") {
+            category = "hoodies & sweatshirts";
+            parent = "apparel";
+
+        } else if (message.waist_line) {
+            category = "pants & shorts";
+            parent = "apparel";
+
+        } else {
+            category = "boxers & briefs";
+            parent = "underwear";
+        }
         
         result = Object.values(result)
             .filter(e => e.category === category)      //narrows to specific clothing category
-            .map(e => e.packs[Object.keys(e.packs)[0]].default);
-        //TODO: fix bug where object names are overwriting each other
-        result = Object.values(Object.assign({}, ...result))      //narrows to each article in a catalog
-            .filter(e => e.primaryColor.map(e => e.color).includes(message.color));        //narrows to color
-            
-        //console.log(result);
+            .map(e => Object.entries(e.packs[Object.keys(e.packs)[0]].default));
+        result = [].concat(...result)      //narrows to each article in a catalog
+            .filter(([id, e]) => e.primaryColor.map(e => e.color).includes(message.color))        //narrows to color
+            .map(([id, e]) => ({
+                brand: "Pact",
+                name: e.description,
+                link: "https://wearpact.com/"
+                    .concat(message.gender + "/")
+                    .concat(parent + "/")
+                    .concat(category.replace(/\s/g, "%20").replace(/&/g, "%26") + "/")
+                    .concat(e.style.replace(/\s/g, "%20") + "/")
+                    .concat(e.itemId),
+                image: null,
+                price: e.price.sale
+            }));
 
+        console.log(JSON.parse(JSON.stringify(result)));
+        
         return result.splice(0, 5);
     };
 
