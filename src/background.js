@@ -88,8 +88,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 image: null,
                 price: e.price.sale
             }));
-
-        console.log(JSON.parse(JSON.stringify(result)));
         
         return result.splice(0, 5);
     };
@@ -98,9 +96,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     };
 
-    toEverlane();
-    toPact();
-    toPatagonia();
+    Promise.all([toEverlane(), toPact(), toPatagonia()])        //waits for each async function to finish executing
+        .then(values => {
+            console.log(results.concat(...values));
+        });
 
     /* stardardized result to be stored
     {
