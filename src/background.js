@@ -57,14 +57,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (!message.type) category = "tops & shirts";
         else if (message.type === "pullovers") category = "hoodies & sweatshirts";
         else if (message.waist_line) category = "pants & shorts";
-
+        else category = "boxers & briefs";
+        
         result = Object.values(result)
             .filter(e => e.category === category)      //narrows to specific clothing category
             .map(e => e.packs[Object.keys(e.packs)[0]].default);
+        //TODO: fix bug where object names are overwriting each other
         result = Object.values(Object.assign({}, ...result))      //narrows to each article in a catalog
             .filter(e => e.primaryColor.map(e => e.color).includes(message.color));        //narrows to color
             
-        console.log(result);
+        //console.log(result);
 
         return result.splice(0, 5);
     };
@@ -76,6 +78,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     toEverlane();
     toPact();
     toPatagonia();
+
+    /* stardardized result to be stored
+    {
+        brand: ,
+        name: ,
+        link: ,
+        image: ,
+        price: 
+    }
+    */
 });
 
 //listens for url changes
