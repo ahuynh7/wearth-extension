@@ -85,7 +85,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     .concat(category.replace(/\s/g, "%20").replace(/&/g, "%26") + "/")
                     .concat(e.style.replace(/\s/g, "%20") + "/")
                     .concat(e.itemId),
-                image: null,
+                image: "https://static.wearpact.com/" + e.img.large[0],
                 price: e.price.sale
             }));
         
