@@ -15,14 +15,20 @@ const parseUrl = url => {
 
 //listens for messages sent from contentScripts; debugging purposes
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
-    sendResponse(true);
+    console.log(message, sender);
+
+    //final verification if url origin is shein
+    if (!parseUrl(sender.url)) {
+        sendResponse(false);
+
+        return;
+    } else sendResponse(true);
 
     const results = [];
 
     //distributing scrapped metadata each hard-picked sustainable website, then filters for top 5 results
     const toEverlane = async () => {
-
+        return [];
     };
 
     const toPact = async () => {
@@ -93,21 +99,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     };
 
     const toPatagonia = async () => {
-
+        return [];
     };
 
     Promise.all([toEverlane(), toPact(), toPatagonia()])        //waits for each async function to finish executing
         .then(values => {
-            console.log(results.concat(...values));
+            chrome.storage.local.set({results: [].concat(...values)});      //stores results
+            chrome.action.setPopup({popup: "src/popup.html"});      //executes popup to display results
         });
 
     /* stardardized result to be stored
     {
-        brand: ,
-        name: ,
-        link: ,
-        image: ,
-        price: 
+        brand: string,
+        name: string,
+        link: string href,
+        image: string href (ie: "https://static.wearpact.com/img/product/men/mcn-wht-1-1659716761_thumb.jpg"),
+        price: double
     }
     */
 });
@@ -127,6 +134,6 @@ chrome.tabs.onUpdated.addListener((tabId, {status}, tab) => {
     }
 });
 
-chrome.tabs.onActivated.addListener(activeInfo => {
-    //console.log(activeInfo)
+chrome.storage.onChanged.addListener(changes => {
+    //console.log(changes);
 });

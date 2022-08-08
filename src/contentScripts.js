@@ -13,14 +13,17 @@ chrome.storage.local.set({
                 ...acc,
                 [curr.children[0].innerText.slice(0, -1).toLowerCase().replace(/\s/g, "_")]: curr.children[1].innerText.toLowerCase()}
             ), {})
-    },
-    results: {}
+    }
 });
 
 //gets storage metadata then sends to service worker
 chrome.storage.local.get(
     ["variables"],       //if null argument, then gets all data in storage
     result => {
-        chrome.runtime.sendMessage(result.variables);
+        chrome.runtime.sendMessage(result.variables,
+            response => {
+                alert(response);
+            }
+        );
     }
 );
