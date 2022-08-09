@@ -13,8 +13,7 @@ chrome.storage.local.set({
                 ...acc,
                 [curr.children[0].innerText.slice(0, -1).toLowerCase().replace(/\s/g, "_")]: curr.children[1].innerText.toLowerCase()}
             ), {})
-    },
-    results: {}
+    }
 });
 
 //gets storage metadata then sends to service worker
