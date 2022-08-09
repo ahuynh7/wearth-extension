@@ -19,7 +19,7 @@ chrome.storage.local.get(
             item.key = i;
             item.id = list.id + i;
             item.className = "resultsGalleryItem";
-            thumbnail.src = "";
+            thumbnail.src = result.image;
             brand.innerHTML = result.brand;
             name.innerText = result.name;
             price.innerText = result.price;

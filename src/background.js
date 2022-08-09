@@ -103,7 +103,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     Promise.all([toEverlane(), toPact(), toPatagonia()])        //waits for each async function to finish executing
         .then(values => {
             chrome.storage.local.set({results: [].concat(...values)});      //stores results
-            chrome.action.setPopup({popup: "src/popup.html"});      //executes popup to display results
+            chrome.action.setPopup({popup: "src/ui/popup.html"});      //executes popup to display results
         });
 
     /* stardardized result to be stored
