@@ -24,8 +24,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
     } else sendResponse(true);
 
-    const results = [];
-
     //distributing scrapped metadata each hard-picked sustainable website, then filters for top 5 results
     const toEverlane = async () => {
         return [];

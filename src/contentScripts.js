@@ -20,10 +20,6 @@ chrome.storage.local.set({
 chrome.storage.local.get(
     ["variables"],       //if null argument, then gets all data in storage
     result => {
-        chrome.runtime.sendMessage(result.variables,
-            response => {
-                alert(response);
-            }
-        );
+        chrome.runtime.sendMessage(result.variables);
     }
 );
