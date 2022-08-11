@@ -26,6 +26,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     //distributing scrapped metadata each hard-picked sustainable website, then filters for top 5 results
     const toEverlane = async () => {
+        var link = "https://everlane.com/collections/"
+            .concat((message.gender)+"s-tees/")
+            .concat("color/"+message.color)
+        chrome.tabs.create({url:link})
+        chrome.tabs.executeScript({
+            //code: "(" + this.document.body.innerHTML + ")();"
+        },(results) => {
+            var href = Array.from(this.document.querySelectorAll(".styles_product-details__name__GYqQd").map(x=>x.getAttribute("href")))    
+        });
+        
+        console.log(href)
         return [];
     };
 
