@@ -26,18 +26,38 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     //distributing scrapped metadata each hard-picked sustainable website, then filters for top 5 results
     const toEverlane = async () => {
-        var link = "https://everlane.com/collections/"
-            .concat((message.gender)+"s-tees/")
-            .concat("color/"+message.color)
-        chrome.tabs.create({url:link})
-        chrome.tabs.executeScript({
-            //code: "(" + this.document.body.innerHTML + ")();"
-        },(results) => {
-            var href = Array.from(this.document.querySelectorAll(".styles_product-details__name__GYqQd").map(x=>x.getAttribute("href")))    
-        });
+        const options = {
+            method: 'GET',
+            headers: {
+              authority: 'www.everlane.com',
+              accept: '*/*',
+              'accept-language': 'en-US,en;q=0.9,ja-JP;q=0.8,ja;q=0.7',
+              'if-none-match': 'W/^\^12acd5-CyTzFa2Kp+t9gXE4xsyFN4MAiXU^^',
         
-        console.log(href)
-        return [];
+              referer: 'https://www.everlane.com/collections/mens-tees',
+              'sec-ch-ua': '^\^Chromium^^;v=^\^104^^, ^\^'
+            }
+          };
+          
+        var result = await fetch('https://www.everlane.com/_next/data/qGhaocbzL2uRnvlvwbunp/collections/mens-all.json', options)
+              .then(response => response.json())
+              .catch(err => console.error(err));
+        
+        message.color = message.color.split(" ").pop(); // yoink
+        var titledColor = message.color.charAt(0).toUpperCase().concat(message.color.slice(1)); // doesn't take full lowercase when filtered
+
+        var res = Object.values(result.pageProps.fallbackData.products) // filters by groupID which are just the tees for now
+            .filter(a => (a.productGroupId === 1000)||(a.productGroupId === 1094)||(a.productGroupId === 1227)||(a.productGroupId === 1645)||(a.productGroupId === 1649))
+            res = [].concat(...res)
+              .filter(b => b.color.name.includes(titledColor))
+              .map(c => ({
+                brand: "Everlane",
+                name: c.displayName,
+                link: "https://everlane.com/products/".concat(c.permalink),
+                image: c.albums.square.src,
+                price: c.price
+              }));
+        return res;
     };
 
     const toPact = async () => {
