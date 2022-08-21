@@ -54,10 +54,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 brand: "Everlane",
                 name: c.displayName,
                 link: "https://everlane.com/products/".concat(c.permalink),
-                image: c.albums.square.src,
-                price: c.price
+                image: Object.values(c.albums.square)[0].src,
+                price: parseInt(c.price) // keeps it clean (no decimal)
               }));
-        return res;
+        return res.splice(0,5);
     };
 
     const toPact = async () => {
