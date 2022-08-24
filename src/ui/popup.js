@@ -22,7 +22,7 @@ chrome.storage.local.get(
             thumbnail.src = result.image;
             brand.innerHTML = result.brand;
             name.innerText = result.name;
-            price.innerText = result.price;
+            price.innerText = "$" + result.price;
 
             item.appendChild(thumbnail);
             item.appendChild(brand);
