@@ -73,7 +73,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             image: Object.values(c.albums.square)[0].src,
             price: parseInt(c.price) // keeps it clean (no decimal)
             }));
-        console.log(message.gender)
+
         return res.splice(0,5);
     };
 
@@ -150,7 +150,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     Promise.all([toEverlane(), toPact(), toPatagonia()])        //waits for each async function to finish executing
         .then(values => {
-            chrome.storage.local.set({results: [].concat(...values)});      //stores results
+            chrome.storage.local.set({results: [].concat(...values).sort((a, b) => a.price - b.price)});      //stores results
             chrome.action.setPopup({popup: "src/ui/popup.html"});      //executes popup to display results
         });
 
