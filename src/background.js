@@ -45,7 +45,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             }
           };
         
-        var result = await fetch('https://www.everlane.com/_next/data/qGhaocbzL2uRnvlvwbunp/collections/' + message.gender + "s-all.json", options)
+        // qGhaocbzL2uRnvlvwbunp
+
+        var result = await fetch('https://www.everlane.com/_next/data/-lz_1DYePW3FQW6W_eG-U/collections/' + message.gender + "s-all.json", options)
               .then(response => response.json())
               .catch(err => console.error(err));
         
