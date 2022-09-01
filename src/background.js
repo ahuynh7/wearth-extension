@@ -15,14 +15,66 @@ const parseUrl = url => {
 
 //listens for messages sent from contentScripts; debugging purposes
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
-    sendResponse(true);
+    console.log(message, sender);
 
-    const results = [];
+    //final verification if url origin is shein
+    if (!parseUrl(sender.url)) {
+        sendResponse(false);
+
+        return;
+    } else sendResponse(true);
 
     //distributing scrapped metadata each hard-picked sustainable website, then filters for top 5 results
     const toEverlane = async () => {
+        var noneMatch;
+        if(message.gender === "men"){
+            noneMatch = 'W/^\^12acd5-CyTzFa2Kp+t9gXE4xsyFN4MAiXU^^'
+        }else{
+            noneMatch = 'W/^\^19274e-3Ku6ZRJVNsoq1z/KFIeIwJJUt4A^^'
+        }
 
+        const options = {
+            method: 'GET',
+            headers: {
+              authority: 'www.everlane.com',
+              accept: '*/*',
+              'accept-language': 'en-US,en;q=0.9,ja-JP;q=0.8,ja;q=0.7',
+              'if-none-match': noneMatch,
+              referer: 'https://www.everlane.com/collections/'+message.gender+'s-tees',
+              'sec-ch-ua': '^\^Chromium^^;v=^\^104^^, ^\^'
+            }
+          };
+        
+        // qGhaocbzL2uRnvlvwbunp
+
+        var result = await fetch('https://www.everlane.com/_next/data/igCMDEcGMmKAQhEUEsH5X/collections/' + message.gender + "s-all.json", options)
+              .then(response => response.json())
+              .catch(err => console.error(err));
+        
+        message.color = message.color.split(" ").pop(); // yoink
+        var titledColor = message.color.charAt(0).toUpperCase().concat(message.color.slice(1)); // doesn't take full lowercase when filtered
+
+        
+        
+        if(message.gender === "men"){ //gender picking specific tee-shirt product groupID's
+            var res = Object.values(result.pageProps.fallbackData.products) // filters by groupID which are just the tees for now
+                .filter(a => (a.productGroupId === 1000)||(a.productGroupId === 1094)||(a.productGroupId === 1227)||(a.productGroupId === 1645)||(a.productGroupId === 1649))
+        }else{
+            var res = Object.values(result.pageProps.fallbackData.products) // filters by groupID which are just the tees for now
+                .filter(a => (a.productGroupId === 1627)||(a.productGroupId === 1732)||(a.productGroupId === 2261)||(a.productGroupId === 2266)||(a.productGroupId === 2351))
+        }
+        
+        res = [].concat(...res)
+            .filter(b => b.color.name.includes(titledColor))
+            .map(c => ({
+            brand: "Everlane",
+            name: c.displayName,
+            link: "https://everlane.com/products/".concat(c.permalink),
+            image: Object.values(c.albums.square)[0].src,
+            price: parseInt(c.price) // keeps it clean (no decimal)
+            }));
+
+        return res.splice(0,5);
     };
 
     const toPact = async () => {
@@ -93,21 +145,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     };
 
     const toPatagonia = async () => {
-
+        return [];
     };
 
     Promise.all([toEverlane(), toPact(), toPatagonia()])        //waits for each async function to finish executing
         .then(values => {
-            console.log(results.concat(...values));
+            chrome.storage.local.set({results: [].concat(...values).sort((a, b) => a.price - b.price)});      //stores results
+            chrome.action.setPopup({popup: "src/ui/popup.html"});      //executes popup to display results
         });
 
     /* stardardized result to be stored
     {
-        brand: ,
-        name: ,
-        link: ,
-        image: ,
-        price: 
+        brand: string,
+        name: string,
+        link: string href,
+        image: string href (ie: "https://static.wearpact.com/img/product/men/mcn-wht-1-1659716761_thumb.jpg"),
+        price: double
     }
     */
 });
@@ -127,6 +180,6 @@ chrome.tabs.onUpdated.addListener((tabId, {status}, tab) => {
     }
 });
 
-chrome.tabs.onActivated.addListener(activeInfo => {
-    //console.log(activeInfo)
+chrome.storage.onChanged.addListener(changes => {
+    //console.log(changes);
 });
