@@ -1,6 +1,6 @@
 //unsustainable clothing retailer filter algorithm
 //prone to bugs 
-// yeet
+
 const parseUrl = url => {
     url = new URL(url);
     url.pathname = url.pathname.slice(1);       //removes "/" from the beginning of pathname
