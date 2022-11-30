@@ -47,7 +47,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           };
         
         // **need to fix the unique ID that rotates every week**
-        var result = await fetch('https://www.everlane.com/_next/data/SGn5n3fKD6s3thM1RYdAB/collections/' + message.gender + "s-all.json", options)
+        var everlaneID = 'p7bmhQD56rtjyHZwVtAgk' 
+        
+        var result = await fetch('https://www.everlane.com/_next/data/' + everlaneID + '/collections/' + message.gender + "s-all.json", options)
               .then(response => response.json())
               .catch(err => console.error(err));
         
